@@ -1,4 +1,4 @@
-package com.youxiu326.utils;
+package com.youxiu326.lock.redis;
 
 import com.youxiu326.common.Const;
 import org.slf4j.Logger;
@@ -17,6 +17,10 @@ public class RedisLock {
 
     private static Logger logger = LoggerFactory.getLogger(RedisLock.class);
 
+    /**
+     * 假设你设置的超时时间为30秒
+     * 那么我提前5秒即25秒就将锁过期了
+     */
     private int reduceTime = 5;
 
     private String lockValue = "lock";

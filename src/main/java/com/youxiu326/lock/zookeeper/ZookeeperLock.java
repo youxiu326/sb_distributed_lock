@@ -20,7 +20,7 @@ public class ZookeeperLock {
 
     private static final String LOCK_NAME = "lock_";
 
-    private String lockPath;
+    private volatile String lockPath;
 
     // 监控lockPath的前一个节点的watcher
     private Watcher watcher = new Watcher() {
@@ -117,7 +117,7 @@ public class ZookeeperLock {
         if (index == 0) {
             logger.info("{} 锁获得, lockPath: {}", Thread.currentThread().getName(), lockPath);
         }else{
-// lockPath不是序号最小的节点，监控前一个节点
+            // lockPath不是序号最小的节点，监控前一个节点
             String preLockPath = lockPaths.get(index - 1);
 
             Stat stat = zkClient.exists(LOCK_ROOT_PATH + "/" + preLockPath, watcher);
@@ -125,7 +125,8 @@ public class ZookeeperLock {
             // 假如前一个节点不存在了，比如说执行完毕，或者执行节点掉线，重新获取锁
             if (stat == null) {
                 getLock();
-            } else { // 阻塞当前进程，直到preLockPath释放锁，被watcher观察到，notifyAll后，重新acquireLock
+            } else {
+                // 阻塞当前进程，直到preLockPath释放锁，被watcher观察到，notifyAll后，重新acquireLock
                 logger.info("等待前锁释放，prelocakPath：{} ",preLockPath);
                 synchronized (watcher) {
                     watcher.wait();

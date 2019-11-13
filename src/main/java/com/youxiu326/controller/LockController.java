@@ -2,6 +2,7 @@ package com.youxiu326.controller;
 
 import com.youxiu326.lock.redis.RedisLock;
 import com.youxiu326.lock.redis.RedissonLock;
+import com.youxiu326.lock.zookeeper.ZookeeperCuratorLock;
 import com.youxiu326.lock.zookeeper.ZookeeperLock;
 import com.youxiu326.utils.RedisUtil;
 import org.redisson.api.RedissonClient;
@@ -99,6 +100,38 @@ public class LockController {
                 } finally {
                     if (res){
                         redissonLock.unlock("redis_lock_youxiu326");
+                    }
+                }
+            });
+        }
+
+        return "ok";
+    }
+
+    @RequestMapping("/zookeeperCuratorLock/lock")
+    private String zookeeperCuratorLockLock(){
+
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+        for (int i = 0; i < 1000; i++) {
+            final  int index = i;
+            executorService.submit(()->{
+                boolean res=false;
+                try {
+                    // 尝试获取锁，最多等待3秒，使用临时节点，会话关闭，节点删除
+                    res = ZookeeperCuratorLock.acquire(3,TimeUnit.SECONDS);
+                    if(res) {
+                        System.out.println(index+"运行完毕");
+                        Thread.sleep(3000);
+                    }else{
+                        System.out.println(index+"未获取到锁");
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (res){
+                        ZookeeperCuratorLock.release();
                     }
                 }
             });

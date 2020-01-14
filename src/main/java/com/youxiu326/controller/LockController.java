@@ -44,8 +44,13 @@ public class LockController {
         for (int i = 0; i < 1000; i++) {
             final  int index = i;
             executorService.submit(()->{
-                redisLock.execute("youxiu326", 10, ()->{
+                redisLock.lock("youxiu326", 10, ()->{
                     System.out.println(index+"运行完毕");
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 });
             });
         }

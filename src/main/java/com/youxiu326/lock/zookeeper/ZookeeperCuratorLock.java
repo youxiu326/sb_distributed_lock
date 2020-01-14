@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ZookeeperCuratorLock {
 
-    private static String address = "youxiu326.com:2181";
+    private static String address = "49.235.105.251:2181";
 
     public static CuratorFramework client;
 

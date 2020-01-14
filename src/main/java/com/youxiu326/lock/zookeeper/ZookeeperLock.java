@@ -34,7 +34,7 @@ public class ZookeeperLock {
     };
 
     public ZookeeperLock() throws IOException {
-        zkClient = new ZooKeeper("youxiu326.com:2181", 10000, new Watcher() {
+        zkClient = new ZooKeeper("49.235.105.251:2181", 10000, new Watcher() {
             @Override
             public void process(WatchedEvent event) {
                 if(event.getState()== Event.KeeperState.Disconnected){
